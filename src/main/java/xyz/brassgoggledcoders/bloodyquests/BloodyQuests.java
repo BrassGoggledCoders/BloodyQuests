@@ -4,24 +4,21 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import WayofTime.bloodmagic.api.event.RitualEvent;
-import WayofTime.bloodmagic.tile.TileAlchemyTable;
-import WayofTime.bloodmagic.tile.TileAltar;
+import WayofTime.alchemicalWizardry.api.event.ItemBindEvent;
+import WayofTime.alchemicalWizardry.common.tileEntity.TEAltar;
 import betterquesting.quests.QuestDatabase;
 import betterquesting.quests.QuestInstance;
 import betterquesting.quests.tasks.TaskBase;
-import betterquesting.quests.tasks.TaskRegistry;
 import betterquesting.quests.tasks.advanced.AdvancedTaskBase;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
 @Mod(modid=BloodyQuests.MODID, name="Bloody Quests", version="@VERSION@", dependencies="required-after:BloodMagic; required-after:bq_standard")
 public class BloodyQuests {
@@ -31,37 +28,34 @@ public class BloodyQuests {
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		TaskRegistry.RegisterTask(TaskRunRitual.class, new ResourceLocation(MODID, "runritual"));
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 	
 	@SubscribeEvent
-	public void onRitualRun(RitualEvent.RitualActivatedEvent event)
+	public void itemBound(ItemBindEvent event)
 	{
-		World world = event.mrs.getWorldObj();
-		EntityPlayer player = event.player;
-
-		if(player == null || world.isRemote)
+		if(event.player == null || event.player.worldObj.isRemote || event.itemStack == null)
 			return;
 		
-		for(Entry<TaskRunRitual,QuestInstance> set : GetRitualTasks(player.getUniqueID()).entrySet())
-		{
-			set.getKey().onRitualRun(world, player, event.ritual);
-		}
+			for(Entry<AdvancedTaskBase,QuestInstance> set : GetAdvancedTasks(event.player.getUniqueID()).entrySet())
+			{
+				set.getKey().onItemCrafted(set.getValue(), event.player, event.itemStack);
+			}
 	}
-	
 	//Semi-dirty hax
 	@SubscribeEvent
-	public void containerOpened(PlayerInteractEvent.RightClickBlock event)
+	public void containerOpened(PlayerInteractEvent event)
 	{
-		EntityPlayer player = event.getEntityPlayer();
-		TileEntity te = event.getWorld().getTileEntity(event.getPos());
+		if(event.action == Action.RIGHT_CLICK_BLOCK)
+		{
+		EntityPlayer player = event.entityPlayer;
+		TileEntity te = event.world.getTileEntity(event.x, event.y, event.z);
 		
-		if(player == null || event.getWorld().isRemote || te == null)
+		if(player == null || event.world.isRemote || te == null)
 			return;
 		
-		if(te instanceof TileAltar) {
-			TileAltar altar = (TileAltar) te;
+		if(te instanceof TEAltar) {
+			TEAltar altar = (TEAltar) te;
 
 			for(Entry<AdvancedTaskBase,QuestInstance> set : GetAdvancedTasks(player.getUniqueID()).entrySet())
 			{
@@ -69,7 +63,7 @@ public class BloodyQuests {
 			}
 		}
 		//TODO Could use improvement, currently only works if GUI is closed and reopened
-		else if(te instanceof TileAlchemyTable)
+		/*else if(te instanceof TileAlchemyTable)
 		{
 			TileAlchemyTable table = (TileAlchemyTable) te;
 			
@@ -77,6 +71,7 @@ public class BloodyQuests {
 			{
 				set.getKey().onItemCrafted(set.getValue(), player, table.getStackInSlot(TileAlchemyTable.outputSlot));
 			}
+		}*/
 		}
 	}
 	
@@ -91,24 +86,6 @@ public class BloodyQuests {
 				if(task instanceof AdvancedTaskBase && !task.isComplete(uuid))
 				{
 					map.put((AdvancedTaskBase)task, quest);
-				}
-			}
-		}
-		
-		return map;
-	}
-	
-	HashMap<TaskRunRitual, QuestInstance> GetRitualTasks(UUID uuid)
-	{
-		HashMap<TaskRunRitual, QuestInstance> map = new HashMap<TaskRunRitual, QuestInstance>();
-		
-		for(QuestInstance quest : QuestDatabase.getActiveQuests(uuid))
-		{
-			for(TaskBase task : quest.tasks)
-			{
-				if(task instanceof TaskRunRitual && !task.isComplete(uuid))
-				{
-					map.put((TaskRunRitual)task, quest);
 				}
 			}
 		}

@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
@@ -12,7 +11,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
 
@@ -21,12 +20,9 @@ repositories {
         name "BrassGoggledCoders maven"
         url "https://maven.brassgoggledcoders.xyz"
     }
-maven {
-    url "http://tehnut.info/maven/"
-  }
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'forge'
 
 version = "${minecraft_version}-${mod_version}." + System.getenv("bamboo_buildNumber")
 
@@ -34,18 +30,11 @@ group= "xyz.brassgoggledcoders.bloodyquests"
 archivesBaseName = "${mod_name}"
 
 minecraft {
-    version = "${minecraft_version}-${forge_version}"
-
-    mappings = "${mappings_version}"
-    runDir = "run/"
-    useDepAts = true
+    version = "${minecraft_version}-${forge_version}-${minecraft_version}"
+	mappings="stable_12"
 
     replace "@VERSION@", project.version
     replaceIn "${mod_name}.java"
-}
-
-dependencies {
-	deobfCompile "com.wayoftime.bloodmagic:BloodMagic:1.9.4-2.0.1-42"
 }
 
 task getLibs {
@@ -56,13 +45,16 @@ task getLibs {
 
     def downloads = new ArrayList<Tuple>();
 
-    def bq = 'BetterQuesting-1.2.126.jar'
-    def bqSource = 'http://minecraft.curseforge.com/projects/better-questing/files/2306520/download'
-	def bqs = 'StandardExpansion-1.2.84.jar'
-	def bqsSource = 'http://minecraft.curseforge.com/projects/better-questing-standard-expansion/files/2303690/download'
+    def bq = 'BetterQuesting-1.0.124.jar'
+    def bqSource = 'http://minecraft.curseforge.com/projects/better-questing/files/2306515/download'
+	def bqs = 'StandardExpansion-1.0.81.jar'
+	def bqsSource = 'http://minecraft.curseforge.com/projects/better-questing-standard-expansion/files/2303642/download'
+	def bm = 'BloodMagic-1.7.10-1.3.3-17.jar'
+	def bmSource = 'http://minecraft.curseforge.com/projects/blood-magic/files/latest'
 
     downloads.add(new Tuple(bq, bqSource))
 	downloads.add(new Tuple(bqs, bqsSource))
+	downloads.add(new Tuple(bm, bmSource))
 
     libsFolder.listFiles().each { file ->
         def isInDownloadList = false;
