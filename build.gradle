@@ -30,7 +30,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 version = "${minecraft_version}-${mod_version}." + System.getenv("bamboo_buildNumber")
 
-group= "xyz.brassgoggledcoders.modularutilities"
+group= "xyz.brassgoggledcoders.bloodyquests"
 archivesBaseName = "${mod_name}"
 
 minecraft {

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.UUID;
 
+import WayofTime.bloodmagic.tile.TileAlchemyTable;
 import WayofTime.bloodmagic.tile.TileAltar;
 import betterquesting.quests.QuestDatabase;
 import betterquesting.quests.QuestInstance;
@@ -42,6 +43,15 @@ public class BloodyQuests {
 		if(te instanceof TileAltar) {
 			TileAltar altar = (TileAltar) te;
 
+			for(Entry<AdvancedTaskBase,QuestInstance> set : GetAdvancedTasks(player.getUniqueID()).entrySet())
+			{
+				set.getKey().onItemCrafted(set.getValue(), player, altar.getStackInSlot(0));
+			}
+		}
+		else if(te instanceof TileAlchemyTable)
+		{
+			TileAlchemyTable table = (TileAlchemyTable) te;
+			
 			for(Entry<AdvancedTaskBase,QuestInstance> set : GetAdvancedTasks(player.getUniqueID()).entrySet())
 			{
 				set.getKey().onItemCrafted(set.getValue(), player, altar.getStackInSlot(0));
