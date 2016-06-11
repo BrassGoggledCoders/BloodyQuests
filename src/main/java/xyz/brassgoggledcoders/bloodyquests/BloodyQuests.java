@@ -18,7 +18,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid=BloodyQuests.MODID, name="Bloody Quests", version="@VERSION@", dependencies="required-after:BloodMagic; required-after:betterquesting")
+@Mod(modid=BloodyQuests.MODID, name="Bloody Quests", version="@VERSION@", dependencies="required-after:BloodMagic; required-after:bq_standard")
 public class BloodyQuests {
 	
 	public static final String MODID = "bloodyquests";
