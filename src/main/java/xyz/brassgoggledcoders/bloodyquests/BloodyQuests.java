@@ -48,13 +48,14 @@ public class BloodyQuests {
 				set.getKey().onItemCrafted(set.getValue(), player, altar.getStackInSlot(0));
 			}
 		}
+		//TODO Could use improvement, currently only works if GUI is closed and reopened
 		else if(te instanceof TileAlchemyTable)
 		{
 			TileAlchemyTable table = (TileAlchemyTable) te;
 			
 			for(Entry<AdvancedTaskBase,QuestInstance> set : GetAdvancedTasks(player.getUniqueID()).entrySet())
 			{
-				set.getKey().onItemCrafted(set.getValue(), player, altar.getStackInSlot(0));
+				set.getKey().onItemCrafted(set.getValue(), player, table.getStackInSlot(TileAlchemyTable.outputSlot));
 			}
 		}
 	}
