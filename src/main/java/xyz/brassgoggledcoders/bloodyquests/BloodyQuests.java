@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import WayofTime.alchemicalWizardry.api.event.ItemBindEvent;
 import WayofTime.alchemicalWizardry.common.tileEntity.TEAltar;
+import WayofTime.alchemicalWizardry.common.tileEntity.TEWritingTable;
 import betterquesting.quests.QuestDatabase;
 import betterquesting.quests.QuestInstance;
 import betterquesting.quests.tasks.TaskBase;
@@ -20,7 +21,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
-@Mod(modid=BloodyQuests.MODID, name="Bloody Quests", version="@VERSION@", dependencies="required-after:BloodMagic; required-after:bq_standard")
+@Mod(modid=BloodyQuests.MODID, name="Bloody Quests", version="@VERSION@", dependencies="required-after:bq_standard")
 public class BloodyQuests {
 	
 	public static final String MODID = "bloodyquests";
@@ -63,15 +64,15 @@ public class BloodyQuests {
 			}
 		}
 		//TODO Could use improvement, currently only works if GUI is closed and reopened
-		/*else if(te instanceof TileAlchemyTable)
+		else if(te instanceof TEWritingTable)
 		{
-			TileAlchemyTable table = (TileAlchemyTable) te;
+			TEWritingTable table = (TEWritingTable) te;
 			
 			for(Entry<AdvancedTaskBase,QuestInstance> set : GetAdvancedTasks(player.getUniqueID()).entrySet())
 			{
-				set.getKey().onItemCrafted(set.getValue(), player, table.getStackInSlot(TileAlchemyTable.outputSlot));
+				set.getKey().onItemCrafted(set.getValue(), player, table.getStackInSlot(6));
 			}
-		}*/
+		}
 		}
 	}
 	
