@@ -1,0 +1,186 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+    }
+}
+
+repositories {
+    maven {
+        name "BrassGoggledCoders maven"
+        url "https://maven.brassgoggledcoders.xyz"
+    }
+maven {
+    url "http://tehnut.info/maven/"
+  }
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+version = "${minecraft_version}-${mod_version}." + System.getenv("bamboo_buildNumber")
+
+group= "xyz.brassgoggledcoders.modularutilities"
+archivesBaseName = "${mod_name}"
+
+minecraft {
+    version = "${minecraft_version}-${forge_version}"
+
+    mappings = "${mappings_version}"
+    runDir = "run/"
+    useDepAts = true
+
+    replace "@VERSION@", project.version
+    replaceIn "${mod_name}.java"
+}
+
+dependencies {
+	deobfCompile "com.wayoftime.bloodmagic:BloodMagic:1.9.4-2.0.1-42"
+}
+
+task getLibs {
+    def libsFolder = new File('libs')
+    if (!libsFolder.isDirectory()) {
+        libsFolder.mkdirs()
+    }
+
+    def downloads = new ArrayList<Tuple>();
+
+    def bq = 'BetterQuesting-1.2.126.jar'
+    def bqSource = 'http://minecraft.curseforge.com/projects/better-questing/files/2306520/download'
+	def bqs = 'StandardExpansion-1.2.84.jar'
+	def bqsSource = 'http://minecraft.curseforge.com/projects/better-questing-standard-expansion/files/2303690/download'
+
+    downloads.add(new Tuple(bq, bqSource))
+	downloads.add(new Tuple(bqs, bqsSource))
+
+    libsFolder.listFiles().each { file ->
+        def isInDownloadList = false;
+        downloads.each {download ->
+            if(file.name.equals(download.get(0).toString())) {
+                isInDownloadList = true;
+            }
+        }
+        if(!isInDownloadList || file.size() < 5) {
+            println "Deleting file " + file.name
+            file.delete();
+        }
+    }
+
+    downloads.each{download ->
+        def fileLocation = new File('libs', download.get(0).toString())
+        if(!fileLocation.exists())  {
+            def downloadString = download.get(1).toString()
+            if(downloadString.contains(" ")) {
+                downloadString = downloadString.replace(" ", "%20");
+            }
+            println "Downloading " + download.get(0).toString()
+            fileLocation.withOutputStream { out ->
+                new URL(downloadString).withInputStream { from ->
+                    out << from;
+                }
+            }
+        }
+    }
+
+
+}
+
+compileJava {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
+processResources
+{
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+jar {
+    classifier = ""
+}
+
+task deobfJar(type: Jar) {
+    from(sourceSets.main.output) {
+        classifier = "deobf"
+    }
+}
+
+artifacts {
+    archives deobfJar
+}
+
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+}
+
+task("uploadJars", dependsOn: "reobf") {
+    description = "uploads JARs"
+    if (System.getenv("bamboo_local_maven") != null) {
+        apply plugin: 'maven'
+        uploadArchives {
+            repositories {
+                mavenDeployer {
+                    repository(url: "file://" + System.getenv("bamboo_local_maven"))
+                    pom {
+                        groupId = project.group
+                        version = project.version
+                        artifactId = project.archivesBaseName
+                        project {
+                            name project.archivesBaseName
+                            packaging 'jar'
+                            description 'ModularUtilities'
+                            url ''
+                            scm {
+                                url 'https://github.com/BrassGoggledCoders/${mod_name}'
+                                connection 'scm:git:git@github.com:BrassGoggledCoders/${mod_name}.git'
+                                developerConnection 'scm:git:git@github.com:BrassGoggledCoders/${mod_name}.git'
+                            }
+                            issueManagement {
+                                system 'github'
+                                url 'https://github.com/BrassGoggledCoders/${mod_name}/issues'
+                            }
+                            licenses {
+                                license {
+                                    name 'MIT'
+                                    url 'https://github.com/BrassGoggledCoders/ModularUtilities/blob/master/LICENSE'
+                                    distribution 'repo'
+                                }
+                            }
+                            developers {
+				developer {
+                                    id 'warlordjones'
+                                    name 'warlordjones'
+                                    roles { role 'developer' }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
