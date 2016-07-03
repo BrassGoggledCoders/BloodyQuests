@@ -6,7 +6,6 @@ import betterquesting.client.gui.GuiQuesting;
 import betterquesting.client.gui.misc.GuiEmbedded;
 import betterquesting.quests.tasks.TaskBase;
 import betterquesting.utils.JsonHelper;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiScreen;
@@ -28,9 +27,10 @@ public class TaskRunRitual extends TaskBase {
 		if(targetRitualName == null)
 			return;
 		if(!isComplete(player.getUniqueID())) {
-			if(ritualKey.equalsIgnoreCase(targetRitualName)) {
+			// substring(5) removes AWXXX from the start of the name
+			if(ritualKey.substring(5).equalsIgnoreCase(targetRitualName)) {
 				this.setCompletion(player.getUniqueID(), true);
-				FMLLog.warning("true", "");
+				// FMLLog.warning("true", "");
 			}
 		}
 	}
