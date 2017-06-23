@@ -21,9 +21,10 @@ repositories {
         name "BrassGoggledCoders maven"
         url "https://maven.brassgoggledcoders.xyz"
     }
-maven {
-    url "http://tehnut.info/maven/"
-  }
+    maven {
+        name "TehNut Maven"
+        url "http://tehnut.info/maven"
+    }
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
@@ -45,7 +46,7 @@ minecraft {
 }
 
 dependencies {
-	deobfCompile "com.wayoftime.bloodmagic:BloodMagic:1.9.4-2.0.1-42"
+	deobfCompile "com.wayoftime.bloodmagic:BloodMagic:1.11-2.1.11-80"
 }
 
 task getLibs {
@@ -56,10 +57,10 @@ task getLibs {
 
     def downloads = new ArrayList<Tuple>();
 
-    def bq = 'BetterQuesting-1.2.126.jar'
-    def bqSource = 'http://minecraft.curseforge.com/projects/better-questing/files/2306520/download'
-	def bqs = 'StandardExpansion-1.2.84.jar'
-	def bqsSource = 'http://minecraft.curseforge.com/projects/better-questing-standard-expansion/files/2303690/download'
+    def bq = 'BetterQuesting-2.4.235.jar'
+    def bqSource = 'https://minecraft.curseforge.com/projects/better-questing/files/2433319/download'
+	def bqs = 'StandardExpansion-2.4.132.jar'
+	def bqsSource = 'https://minecraft.curseforge.com/projects/better-questing-standard-expansion/files/2391995/download'
 
     downloads.add(new Tuple(bq, bqSource))
 	downloads.add(new Tuple(bqs, bqsSource))
