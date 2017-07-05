@@ -47,6 +47,7 @@ minecraft {
 
 dependencies {
 	deobfCompile "com.wayoftime.bloodmagic:BloodMagic:1.11-2.1.11-80"
+    deobfCompile "info.amerifrance.guideapi:Guide-API:1.11.2-2.1.1-52"
 }
 
 task getLibs {
