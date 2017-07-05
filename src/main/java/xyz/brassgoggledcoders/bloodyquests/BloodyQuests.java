@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -36,6 +37,7 @@ public class BloodyQuests {
 
 	@SubscribeEvent
 	public void onRitualRun(RitualEvent.RitualActivatedEvent event) {
+		FMLLog.severe(event.ritual.getName());
 		World world = event.mrs.getWorldObj();
 		EntityPlayer player = event.player;
 
@@ -55,7 +57,7 @@ public class BloodyQuests {
 
 		if(player == null || event.getWorld().isRemote || te == null)
 			return;
-
+		// TODO Swap this to use the altar event
 		if(te instanceof TileAltar) {
 			TileAltar altar = (TileAltar) te;
 
@@ -63,7 +65,7 @@ public class BloodyQuests {
 				set.getKey().onItemCrafted(set.getValue(), player, altar.getStackInSlot(0));
 			}
 		}
-		// TODO Could use improvement, currently only works if GUI is closed and reopened
+		// TODO Pull request an event to blood magic
 		else if(te instanceof TileAlchemyTable) {
 			TileAlchemyTable table = (TileAlchemyTable) te;
 
@@ -73,6 +75,7 @@ public class BloodyQuests {
 		}
 	}
 
+	// FIXME
 	HashMap<TaskCrafting, IQuest> getCraftingTasks(UUID uuid) {
 		HashMap<TaskCrafting, IQuest> map = new HashMap<TaskCrafting, IQuest>();
 

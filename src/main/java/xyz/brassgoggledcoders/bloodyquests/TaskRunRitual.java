@@ -23,7 +23,7 @@ import xyz.brassgoggledcoders.bloodyquests.client.GuiTaskRunRitual;
 public class TaskRunRitual implements ITask {
 
 	private ArrayList<UUID> completeUsers = new ArrayList<UUID>();
-	public String targetRitualName;
+	public String targetRitualName = "Water";
 
 	@Override
 	public String getUnlocalisedName() {
@@ -32,22 +32,21 @@ public class TaskRunRitual implements ITask {
 
 	public void onRitualRun(World world, EntityPlayer player, Ritual ritual) {
 		if(!isComplete(player.getUniqueID())) {
-			FMLLog.warning(targetRitualName, "");
-			if(ritual.getName() == targetRitualName) {
+			if(ritual.getName().substring(6).equalsIgnoreCase(targetRitualName)) {
+				FMLLog.warning("true");
 				this.setComplete(player.getUniqueID());
-				FMLLog.warning("true", "");
 			}
 		}
 	}
 
 	@Override
 	public void readFromJson(JsonObject json, EnumSaveType type) {
-		targetRitualName = JsonHelper.GetString(json, "targetRitualName", "");
+		targetRitualName = JsonHelper.GetString(json, "name", "");
 	}
 
 	@Override
 	public JsonObject writeToJson(JsonObject json, EnumSaveType type) {
-		json.addProperty("targetRitualName", targetRitualName);
+		json.addProperty("name", targetRitualName);
 		return json;
 	}
 
@@ -97,9 +96,6 @@ public class TaskRunRitual implements ITask {
 	}
 
 	@Override
-	public void update(EntityPlayer arg0, IQuest arg1) {
-		// TODO Auto-generated method stub
-
-	}
+	public void update(EntityPlayer arg0, IQuest arg1) {}
 
 }

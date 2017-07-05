@@ -4,7 +4,6 @@ import betterquesting.api.client.gui.GuiElement;
 import betterquesting.api.client.gui.misc.IGuiEmbedded;
 import betterquesting.client.themes.ThemeRegistry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import xyz.brassgoggledcoders.bloodyquests.TaskRunRitual;
 
 public class GuiTaskRunRitual extends GuiElement implements IGuiEmbedded {
@@ -17,7 +16,7 @@ public class GuiTaskRunRitual extends GuiElement implements IGuiEmbedded {
 
 	public GuiTaskRunRitual(TaskRunRitual task, int posX, int posY, int sizeX, int sizeY) {
 		this.mc = Minecraft.getMinecraft();
-		targetRitualName = task.targetRitualName;
+		this.targetRitualName = task.targetRitualName;
 		this.posX = posX;
 		this.posY = posY;
 		this.sizeX = sizeX;
@@ -25,19 +24,17 @@ public class GuiTaskRunRitual extends GuiElement implements IGuiEmbedded {
 
 	@Override
 	public void drawBackground(int arg0, int arg1, float arg2) {
-		// TODO Auto-generated method stub
-
+		mc.fontRenderer.drawString("bloodyquests.task.runritual",
+				posX + sizeX / 2 - mc.fontRenderer.getStringWidth("bloodyquests.task.runritual") / 2, posY,
+				ThemeRegistry.INSTANCE.getCurrentTheme().getTextColor());
+		String name = "Ritual: " + targetRitualName;
+		mc.fontRenderer.drawString(name, posX + sizeX / 2 - mc.fontRenderer.getStringWidth(name) / 2, posY + 20,
+				ThemeRegistry.INSTANCE.getCurrentTheme().getTextColor());
 	}
 
 	@Override
 	public void drawForeground(int mx, int my, float partialTick) {
-		mc.fontRenderer.drawString(I18n.format("bloodyquests.task.runritual", new Object[0]),
-				posX + sizeX / 2 - mc.fontRenderer.getStringWidth(I18n.format("bloodyquests.task.runritual", "")) / 2,
-				posY, ThemeRegistry.INSTANCE.getCurrentTheme().getTextColor());
-		mc.fontRenderer.drawString("Ritual: " + targetRitualName,
-				posX + sizeX / 2
-						- mc.fontRenderer.getStringWidth("Ritual: " + I18n.format(targetRitualName, new Object[0])) / 2,
-				posY + 20, ThemeRegistry.INSTANCE.getCurrentTheme().getTextColor());
+
 	}
 
 	@Override
