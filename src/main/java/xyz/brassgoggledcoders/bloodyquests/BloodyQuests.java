@@ -17,7 +17,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -37,7 +36,6 @@ public class BloodyQuests {
 
 	@SubscribeEvent
 	public void onRitualRun(RitualEvent.RitualActivatedEvent event) {
-		FMLLog.severe(event.ritual.getName());
 		World world = event.mrs.getWorldObj();
 		EntityPlayer player = event.player;
 
