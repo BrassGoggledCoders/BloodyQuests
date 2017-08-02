@@ -1,32 +1,58 @@
 package xyz.brassgoggledcoders.bloodyquests.client;
 
-import betterquesting.client.gui.GuiQuesting;
-import betterquesting.client.gui.misc.GuiEmbedded;
+import betterquesting.api.client.gui.GuiElement;
+import betterquesting.api.client.gui.misc.IGuiEmbedded;
 import betterquesting.client.themes.ThemeRegistry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
 import xyz.brassgoggledcoders.bloodyquests.TaskRunRitual;
 
-public class GuiTaskRunRitual extends GuiEmbedded {
+public class GuiTaskRunRitual extends GuiElement implements IGuiEmbedded {
+	private Minecraft mc;
 	private String targetRitualName;
 
-	public GuiTaskRunRitual(TaskRunRitual task, GuiQuesting screen, int posX, int posY, int sizeX, int sizeY) {
-		super(screen, posX, posY, sizeX, sizeY);
-		targetRitualName = task.targetRitualName;
+	private int posX = 0;
+	private int posY = 0;
+	private int sizeX = 0;
+
+	public GuiTaskRunRitual(TaskRunRitual task, int posX, int posY, int sizeX, int sizeY) {
+		this.mc = Minecraft.getMinecraft();
+		this.targetRitualName = task.targetRitualName;
+		this.posX = posX;
+		this.posY = posY;
+		this.sizeX = sizeX;
 	}
 
 	@Override
-	public void drawGui(int mx, int my, float partialTick) {
-		Minecraft.getMinecraft().fontRendererObj.drawString(I18n.format("bloodyquests.task.runritual", new Object[0]),
-				posX + sizeX / 2
-						- Minecraft.getMinecraft().fontRendererObj
-								.getStringWidth(I18n.format("bloodyquests.task.runritual", "")) / 2,
-				posY, ThemeRegistry.curTheme().textColor().getRGB());
-		Minecraft.getMinecraft().fontRendererObj.drawString("Ritual: " + targetRitualName,
-				posX + sizeX / 2
-						- Minecraft.getMinecraft().fontRendererObj
-								.getStringWidth("Ritual: " + I18n.format(targetRitualName, new Object[0])) / 2,
-				posY + 20, ThemeRegistry.curTheme().textColor().getRGB());
+	public void drawBackground(int arg0, int arg1, float arg2) {
+		mc.fontRendererObj.drawString("bloodyquests.task.runritual",
+				posX + sizeX / 2 - mc.fontRendererObj.getStringWidth("bloodyquests.task.runritual") / 2, posY,
+				ThemeRegistry.INSTANCE.getCurrentTheme().getTextColor());
+		String name = "Ritual: " + targetRitualName;
+		mc.fontRendererObj.drawString(name, posX + sizeX / 2 - mc.fontRendererObj.getStringWidth(name) / 2, posY + 20,
+				ThemeRegistry.INSTANCE.getCurrentTheme().getTextColor());
+	}
+
+	@Override
+	public void drawForeground(int mx, int my, float partialTick) {
+
+	}
+
+	@Override
+	public void onKeyTyped(char arg0, int arg1) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onMouseClick(int arg0, int arg1, int arg2) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onMouseScroll(int arg0, int arg1, int arg2) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

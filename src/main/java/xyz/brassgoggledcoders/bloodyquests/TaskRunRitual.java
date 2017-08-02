@@ -1,22 +1,27 @@
 package xyz.brassgoggledcoders.bloodyquests;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 import com.google.gson.JsonObject;
 
-import betterquesting.client.gui.GuiQuesting;
-import betterquesting.client.gui.misc.GuiEmbedded;
-import betterquesting.quests.tasks.TaskBase;
-import betterquesting.utils.JsonHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import betterquesting.api.client.gui.misc.IGuiEmbedded;
+import betterquesting.api.enums.EnumSaveType;
+import betterquesting.api.jdoc.IJsonDoc;
+import betterquesting.api.questing.IQuest;
+import betterquesting.api.questing.tasks.ITask;
+import betterquesting.api.utils.JsonHelper;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import xyz.brassgoggledcoders.bloodyquests.client.GuiRunRitualEditor;
 import xyz.brassgoggledcoders.bloodyquests.client.GuiTaskRunRitual;
 
-public class TaskRunRitual extends TaskBase {
+public class TaskRunRitual implements ITask {
 
-	public String targetRitualName;
+	private ArrayList<UUID> completeUsers = new ArrayList<UUID>();
+	public String targetRitualName = "Water";
 
 	@Override
 	public String getUnlocalisedName() {
@@ -24,38 +29,70 @@ public class TaskRunRitual extends TaskBase {
 	}
 
 	public void onRitualRun(World world, EntityPlayer player, String ritualKey) {
-		if(targetRitualName == null)
-			return;
 		if(!isComplete(player.getUniqueID())) {
-			// substring(5) removes AWXXX from the start of the name
 			if(ritualKey.substring(5).equalsIgnoreCase(targetRitualName)) {
-				this.setCompletion(player.getUniqueID(), true);
-				// FMLLog.warning("true", "");
+				this.setComplete(player.getUniqueID());
 			}
 		}
 	}
 
 	@Override
-	public void writeToJson(JsonObject json) {
-		super.writeToJson(json);
-		json.addProperty("targetRitualName", targetRitualName);
+	public void readFromJson(JsonObject json, EnumSaveType type) {
+		targetRitualName = JsonHelper.GetString(json, "name", "");
 	}
 
 	@Override
-	public void readFromJson(JsonObject json) {
-		super.readFromJson(json);
-		targetRitualName = JsonHelper.GetString(json, "targetRitualName", "");
+	public JsonObject writeToJson(JsonObject json, EnumSaveType type) {
+		json.addProperty("name", targetRitualName);
+		return json;
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public GuiScreen GetEditor(GuiScreen parent, JsonObject data) {
-		return new GuiRunRitualEditor(parent, data);
+	public void detect(EntityPlayer arg0, IQuest arg1) {
+		// Done elsewhere.
 	}
 
 	@Override
-	public GuiEmbedded getGui(GuiQuesting screen, int posX, int posY, int sizeX, int sizeY) {
-		return new GuiTaskRunRitual(this, screen, posX, posY, sizeX, sizeY);
+	public IJsonDoc getDocumentation() {
+		return null;
 	}
+
+	@Override
+	public ResourceLocation getFactoryID() {
+		return TaskRunRitualFactory.INSTANCE.getRegistryName();
+	}
+
+	@Override
+	public GuiScreen getTaskEditor(GuiScreen parent, IQuest data) {
+		return new GuiRunRitualEditor(parent, this);
+	}
+
+	@Override
+	public IGuiEmbedded getTaskGui(int posX, int posY, int sizeX, int sizeY, IQuest arg4) {
+		return new GuiTaskRunRitual(this, posX, posY, sizeX, sizeY);
+	}
+
+	@Override
+	public boolean isComplete(UUID arg0) {
+		return completeUsers.contains(arg0);
+	}
+
+	@Override
+	public void resetAll() {
+		completeUsers.clear();
+	}
+
+	@Override
+	public void resetUser(UUID arg0) {
+		completeUsers.remove(arg0);
+	}
+
+	@Override
+	public void setComplete(UUID arg0) {
+		completeUsers.add(arg0);
+	}
+
+	@Override
+	public void update(EntityPlayer arg0, IQuest arg1) {}
 
 }

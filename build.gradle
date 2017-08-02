@@ -17,8 +17,8 @@ buildscript {
 
 repositories {
     maven {
-        name "BrassGoggledCoders maven"
-        url "https://maven.brassgoggledcoders.xyz"
+        name = "CurseForge"
+        url = "https://minecraft.curseforge.com/api/maven/"
     }
 }
 
@@ -30,17 +30,42 @@ group= "xyz.brassgoggledcoders.bloodyquests"
 archivesBaseName = "${mod_name}"
 
 minecraft {
-    version = "1.7.10-10.13.4.1448-1.7.10"
-	mappings="stable_12"
+    version="1.7.10-10.13.4.1448-1.7.10"
+	mappings="${mappings_version}"
 
     replace "@VERSION@", project.version
     replaceIn "${mod_name}.java"
 }
 
 dependencies {
-	compile files("libs/BetterQuesting-deobf-1.0.124.jar")
-	compile files("libs/StandardExpansion-deobf-1.0.81.jar")
-	compile files("libs/BloodMagic-1.7.10-1.3.3-17.jar")
+    compile files("libs/BQ.jar")
+	compile files("libs/BQ-SE.jar")
+    compile files("libs/BM.jar")
+}
+
+compileJava {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
+processResources
+{
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+jar {
+    classifier = ""
 }
 
 task getLibs {
@@ -51,12 +76,12 @@ task getLibs {
 
     def downloads = new ArrayList<Tuple>();
 
-    def bq = 'BetterQuesting-deobf-1.0.124.jar'
-    def bqSource = 'http://minecraft.curseforge.com/projects/better-questing/files/2306516/download'
-	def bqs = 'StandardExpansion-deobf-1.0.81.jar'
-	def bqsSource = 'http://minecraft.curseforge.com/projects/better-questing-standard-expansion/files/2303643/download'
-	def bm = 'BloodMagic-1.7.10-1.3.3-17.jar'
-	def bmSource = 'http://minecraft.curseforge.com/projects/blood-magic/files/latest'
+    def bq = 'BQ.jar'
+    def bqSource = 'https://minecraft.curseforge.com/projects/better-questing/files/2433320/download'
+	def bqs = 'BQ-SE.jar'
+	def bqsSource = 'https://minecraft.curseforge.com/projects/better-questing-standard-expansion/files/2391989/download'
+	def bm = 'BM.jar'
+	def bmSource = 'https://minecraft.curseforge.com/projects/blood-magic/files/2264826/download'
 
     downloads.add(new Tuple(bq, bqSource))
 	downloads.add(new Tuple(bqs, bqsSource))
@@ -90,33 +115,6 @@ task getLibs {
             }
         }
     }
-
-
-}
-
-compileJava {
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
-}
-
-processResources
-{
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}
-
-jar {
-    classifier = ""
 }
 
 task deobfJar(type: Jar) {
