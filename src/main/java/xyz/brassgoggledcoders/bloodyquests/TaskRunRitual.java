@@ -1,22 +1,19 @@
 package xyz.brassgoggledcoders.bloodyquests;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import com.google.gson.JsonObject;
-
-import WayofTime.bloodmagic.api.ritual.Ritual;
-import betterquesting.api.client.gui.misc.IGuiEmbedded;
-import betterquesting.api.enums.EnumSaveType;
-import betterquesting.api.jdoc.IJsonDoc;
+import WayofTime.bloodmagic.ritual.Ritual;
 import betterquesting.api.questing.IQuest;
 import betterquesting.api.questing.tasks.ITask;
-import betterquesting.api.utils.JsonHelper;
+import betterquesting.api2.client.gui.misc.IGuiRect;
+import betterquesting.api2.client.gui.panels.IGuiPanel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
 import xyz.brassgoggledcoders.bloodyquests.client.GuiRunRitualEditor;
 import xyz.brassgoggledcoders.bloodyquests.client.GuiTaskRunRitual;
 
@@ -31,58 +28,24 @@ public class TaskRunRitual implements ITask {
 	}
 
 	public void onRitualRun(World world, EntityPlayer player, Ritual ritual) {
-		if(!isComplete(player.getUniqueID())) {
-			if(ritual.getName().substring(6).equalsIgnoreCase(targetRitualName)) {
-				FMLLog.warning("true");
-				this.setComplete(player.getUniqueID());
-			}
+		if(ritual.getName().substring(6).equalsIgnoreCase(targetRitualName)) {
+			this.setComplete(player.getUniqueID());
 		}
-	}
-
-	@Override
-	public void readFromJson(JsonObject json, EnumSaveType type) {
-		targetRitualName = JsonHelper.GetString(json, "name", "");
-	}
-
-	@Override
-	public JsonObject writeToJson(JsonObject json, EnumSaveType type) {
-		json.addProperty("name", targetRitualName);
-		return json;
 	}
 
 	@Override
 	public void detect(EntityPlayer arg0, IQuest arg1) {
 		// Done elsewhere.
 	}
-
-	@Override
-	public IJsonDoc getDocumentation() {
-		return null;
-	}
-
+	
 	@Override
 	public ResourceLocation getFactoryID() {
 		return TaskRunRitualFactory.INSTANCE.getRegistryName();
 	}
 
 	@Override
-	public GuiScreen getTaskEditor(GuiScreen parent, IQuest data) {
-		return new GuiRunRitualEditor(parent, this);
-	}
-
-	@Override
-	public IGuiEmbedded getTaskGui(int posX, int posY, int sizeX, int sizeY, IQuest arg4) {
-		return new GuiTaskRunRitual(this, posX, posY, sizeX, sizeY);
-	}
-
-	@Override
 	public boolean isComplete(UUID arg0) {
 		return completeUsers.contains(arg0);
-	}
-
-	@Override
-	public void resetAll() {
-		completeUsers.clear();
 	}
 
 	@Override
@@ -96,6 +59,35 @@ public class TaskRunRitual implements ITask {
 	}
 
 	@Override
-	public void update(EntityPlayer arg0, IQuest arg1) {}
+	public void readFromNBT(NBTTagCompound tag) {
+		targetRitualName = tag.getString("ID");
+	}
+
+	@Override
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
+		tag.setString("ID", targetRitualName);
+		return tag;
+	}
+
+	@Override
+	public void readProgressFromNBT(NBTTagCompound tag, boolean arg1) {
+		
+	}
+
+	@Override
+	public NBTTagCompound writeProgressToNBT(NBTTagCompound tag, List<UUID> arg1) {
+		
+		return tag;
+	}
+
+	@Override
+	public IGuiPanel getTaskGui(IGuiRect rect, IQuest arg1) {
+		return new GuiTaskRunRitual(rect, this);
+	}
+
+	@Override
+	public GuiScreen getTaskEditor(GuiScreen screen, IQuest arg1) {
+		return new GuiRunRitualEditor(screen, this);
+	}
 
 }

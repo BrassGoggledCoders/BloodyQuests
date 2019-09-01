@@ -1,12 +1,11 @@
 package xyz.brassgoggledcoders.bloodyquests;
 
-import com.google.gson.JsonObject;
-
-import betterquesting.api.enums.EnumSaveType;
-import betterquesting.api.misc.IFactory;
+import betterquesting.api.questing.tasks.ITask;
+import betterquesting.api2.registry.IFactoryData;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 
-public class TaskRunRitualFactory implements IFactory<TaskRunRitual> {
+public class TaskRunRitualFactory implements IFactoryData<ITask, NBTTagCompound> {
 
 	public static final TaskRunRitualFactory INSTANCE = new TaskRunRitualFactory();
 
@@ -19,11 +18,11 @@ public class TaskRunRitualFactory implements IFactory<TaskRunRitual> {
 	public ResourceLocation getRegistryName() {
 		return new ResourceLocation(BloodyQuests.MODID, "runritual");
 	}
-
+	
 	@Override
-	public TaskRunRitual loadFromJson(JsonObject json) {
+	public TaskRunRitual loadFromData(NBTTagCompound tag) {
 		TaskRunRitual task = new TaskRunRitual();
-		task.readFromJson(json, EnumSaveType.CONFIG);
+		task.readFromNBT(tag);
 		return task;
 	}
 
