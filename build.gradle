@@ -10,9 +10,13 @@ buildscript {
             name = "sonatype"
             url = "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        maven {
+            url = "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'com.wynprice.cursemaven:CurseMaven:1.2.2'
     }
 }
 
@@ -28,6 +32,7 @@ repositories {
 }
 
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.wynprice.cursemaven'
 
 version = "${minecraft_version}-${mod_version}." + System.getenv("bamboo_buildNumber")
 
@@ -35,7 +40,7 @@ group= "xyz.brassgoggledcoders.bloodyquests"
 archivesBaseName = "${mod_name}"
 
 minecraft {
-    version = "${minecraft_version}-${forge_version}"
+    version = "${forge_version}"
 
     mappings = "${mappings_version}"
     runDir = "run/"
@@ -46,62 +51,14 @@ minecraft {
 }
 
 dependencies {
-	deobfCompile "com.wayoftime.bloodmagic:BloodMagic:1.11-2.1.11-80"
-    deobfCompile "info.amerifrance.guideapi:Guide-API:1.11.2-2.1.1-52"
+	deobfCompile "com.wayoftime.bloodmagic:BloodMagic:${bm_version}"
+    deobfCompile "info.amerifrance.guideapi:Guide-API:${guideapi_version}"
+    deobfCompile curse.resolve("better-questing", 2760161)
+    deobfCompile curse.resolve("better-questing-standard-expansion", 2760167)
 }
 
-task getLibs {
-    def libsFolder = new File('libs')
-    if (!libsFolder.isDirectory()) {
-        libsFolder.mkdirs()
-    }
-
-    def downloads = new ArrayList<Tuple>();
-
-    def bq = 'BetterQuesting-2.4.235.jar'
-    def bqSource = 'https://minecraft.curseforge.com/projects/better-questing/files/2433319/download'
-	def bqs = 'StandardExpansion-2.4.132.jar'
-	def bqsSource = 'https://minecraft.curseforge.com/projects/better-questing-standard-expansion/files/2391995/download'
-
-    downloads.add(new Tuple(bq, bqSource))
-	downloads.add(new Tuple(bqs, bqsSource))
-
-    libsFolder.listFiles().each { file ->
-        def isInDownloadList = false;
-        downloads.each {download ->
-            if(file.name.equals(download.get(0).toString())) {
-                isInDownloadList = true;
-            }
-        }
-        if(!isInDownloadList || file.size() < 5) {
-            println "Deleting file " + file.name
-            file.delete();
-        }
-    }
-
-    downloads.each{download ->
-        def fileLocation = new File('libs', download.get(0).toString())
-        if(!fileLocation.exists())  {
-            def downloadString = download.get(1).toString()
-            if(downloadString.contains(" ")) {
-                downloadString = downloadString.replace(" ", "%20");
-            }
-            println "Downloading " + download.get(0).toString()
-            fileLocation.withOutputStream { out ->
-                new URL(downloadString).withInputStream { from ->
-                    out << from;
-                }
-            }
-        }
-    }
-
-
-}
-
-compileJava {
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
-}
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 processResources
 {
