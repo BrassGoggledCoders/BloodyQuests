@@ -1,2 +1,4 @@
 bloodyquests.task.runritual=Activate Ritual
 bloodyquests.title.edit_runritual=Edit Activate Ritual
+bloodyquests.name.edit_runritual=Ritual Name:
+bloodyquests.desc.edit_runritual=Enter the ritual name you wish to watch for in the box. The ritual name is internal format with the prefix stripped. Example - the Eternal Spring ritual has a name of AW001Water, so to detect this enter Water in the box.
