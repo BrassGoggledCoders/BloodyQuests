@@ -61,7 +61,7 @@ public class BloodyQuests {
 
     // Semi-dirty hax - TODO PR Crafting events to BM
     @SubscribeEvent
-    public void containerOpened(PlayerInteractEvent.RightClickBlock event) {
+    public static void rightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         EntityPlayer player = event.getEntityPlayer();
         TileEntity te = event.getWorld().getTileEntity(event.getPos());
 
@@ -73,8 +73,9 @@ public class BloodyQuests {
                         .bulkLookup(pInfo.getSharedQuests());
                 for(DBEntry<IQuest> entry : actQuest) {
                     for(DBEntry<ITask> task : entry.getValue().getTasks().getEntries()) {
-                        if(task.getValue() instanceof TaskCrafting)
+                        if(task.getValue() instanceof TaskCrafting) {
                             ((TaskCrafting) task.getValue()).onItemCraft(pInfo, entry, altar.getStackInSlot(0));
+                        }
                     }
                 }
             }
@@ -84,9 +85,10 @@ public class BloodyQuests {
                         .bulkLookup(pInfo.getSharedQuests());
                 for(DBEntry<IQuest> entry : actQuest) {
                     for(DBEntry<ITask> task : entry.getValue().getTasks().getEntries()) {
-                        if(task.getValue() instanceof TaskCrafting)
+                        if(task.getValue() instanceof TaskCrafting) {
                             ((TaskCrafting) task.getValue()).onItemCraft(pInfo, entry,
                                     table.getStackInSlot(TileAlchemyTable.outputSlot));
+                        }
                     }
                 }
             }
