@@ -7,13 +7,15 @@ import betterquesting.api.questing.IQuest;
 import betterquesting.api.questing.tasks.ITask;
 import betterquesting.api2.client.gui.misc.IGuiRect;
 import betterquesting.api2.client.gui.panels.IGuiPanel;
+import betterquesting.api2.storage.DBEntry;
+import betterquesting.api2.utils.ParticipantInfo;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import xyz.brassgoggledcoders.bloodyquests.client.GuiRunRitualEditor;
-import xyz.brassgoggledcoders.bloodyquests.client.GuiTaskRunRitual;
+import xyz.brassgoggledcoders.bloodyquests.client.PanelTaskRunRitual;
 
 public class TaskRunRitual implements ITask {
 
@@ -29,11 +31,6 @@ public class TaskRunRitual implements ITask {
         if(ritual.getName().substring(6).equalsIgnoreCase(targetRitualName)) {
             setComplete(player.getUniqueID());
         }
-    }
-
-    @Override
-    public void detect(EntityPlayer arg0, IQuest arg1) {
-        // Done elsewhere.
     }
 
     @Override
@@ -79,13 +76,18 @@ public class TaskRunRitual implements ITask {
     }
 
     @Override
-    public IGuiPanel getTaskGui(IGuiRect rect, IQuest arg1) {
-        return new GuiTaskRunRitual(rect, this);
+    public IGuiPanel getTaskGui(IGuiRect rect, DBEntry<IQuest> quest) {
+        return new PanelTaskRunRitual(rect, this);
     }
 
     @Override
-    public GuiScreen getTaskEditor(GuiScreen screen, IQuest arg1) {
-        return new GuiRunRitualEditor(screen, this);
+    public GuiScreen getTaskEditor(GuiScreen parent, DBEntry<IQuest> quest) {
+        return new GuiRunRitualEditor(parent, this);
+    }
+
+    @Override
+    public void detect(ParticipantInfo participant, DBEntry<IQuest> quest) {
+        // Done elsewhere
     }
 
 }

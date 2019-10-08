@@ -53,8 +53,8 @@ minecraft {
 dependencies {
 	deobfCompile "com.wayoftime.bloodmagic:BloodMagic:${bm_version}"
     deobfCompile "info.amerifrance.guideapi:Guide-API:${guideapi_version}"
-    deobfCompile curse.resolve("better-questing", 2760161)
-    deobfCompile curse.resolve("better-questing-standard-expansion", 2760167)
+    deobfCompile curse.resolve("better-questing", 2794634)
+    deobfCompile curse.resolve("better-questing-standard-expansion", 2802756)
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
